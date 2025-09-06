@@ -67,10 +67,20 @@ python manage.py runserver
 - **Creativity:** Themed UI, interactive feedback, and a dedicated learning page make the experience engaging.
 - **Algorithmic Thinking:** Players must think critically about each move, applying the logic of the chosen algorithm.
 
-## License
+## 📸 Screenshots
 
-*(Add a license here if you wish to specify usage rights.)*
+### Home Page
+![Home Page](screenshots/home1.png)
+![Home Page](screenshots/home2.png)
 
-## Contact
+### Game Screen
+![Game Screen](screenshots/game1.png)
+![Game Screen](screenshots/game2.png)
 
-For questions or feedback, contact [your email or GitHub profile].
+### Resume Game
+![Resume Game](screenshots/resume1.png)
+
+### Learn Page
+![Learn Page](screenshots/learn1.png)
+![Learn Page](screenshots/learn2.png)
+
