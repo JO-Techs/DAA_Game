@@ -66,3 +66,21 @@ python manage.py runserver
 - **Conceptual Understanding:** The game enforces algorithmic rules, helping users internalize sorting logic through play.
 - **Creativity:** Themed UI, interactive feedback, and a dedicated learning page make the experience engaging.
 - **Algorithmic Thinking:** Players must think critically about each move, applying the logic of the chosen algorithm.
+
+## 📸 Screenshots
+
+### Home Page
+![Home Page](screenshots/home1.png)
+![Home Page](screenshots/home2.png)
+
+### Game Screen
+![Game Screen](screenshots/game1.png)
+![Game Screen](screenshots/game2.png)
+
+### Resume Game
+![Resume Game](screenshots/resume1.png)
+
+### Learn Page
+![Learn Page](screenshots/learn1.png)
+![Learn Page](screenshots/learn2.png)
+
