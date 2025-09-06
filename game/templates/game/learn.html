@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Learn Sorting Algorithms{% endblock %}
+{% block content %}
+<div class="learn-container" style="max-width: 900px; margin: 40px auto; padding: 30px; background: #fffbe6; border-radius: 12px; box-shadow: 0 2px 8px #e0c26d; color: #563226;">
+    <h1 style="text-align:center;">Learn Sorting Algorithms</h1>
+    <p style="font-size:18px;">Sorting algorithms are fundamental to computer science. Here, you'll find detailed explanations, step-by-step visualizations, and interactive examples for Bubble Sort, Selection Sort, and Insertion Sort.</p>
+    <hr>
+    <h2>Bubble Sort</h2>
+    <p><strong>Concept:</strong> Bubble Sort repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. The largest unsorted element "bubbles up" to its correct position in each pass.</p>
+    <ul>
+        <li>Compare each pair of adjacent items.</li>
+        <li>If the first is greater than the second, swap them.</li>
+        <li>Repeat for all elements, then repeat the process for the next pass.</li>
+        <li>Continue until no swaps are needed.</li>
+    </ul>
+    <div style="background:#f6cd26; padding:10px; border-radius:6px; margin-bottom:10px;">
+        <strong>Pseudocode:</strong>
+        <pre style="margin:0;">for i from 0 to n-1:
+    for j from 0 to n-i-2:
+        if arr[j] > arr[j+1]:
+            swap arr[j], arr[j+1]</pre>
+    </div>
+    <div style="margin-bottom:20px;">
+        <strong>Step-by-step Example:</strong>
+        <pre style="background:#fff; padding:8px; border-radius:6px;">Initial: [5, 3, 8, 4, 2]
+Pass 1: [3, 5, 4, 2, 8]
+Pass 2: [3, 4, 2, 5, 8]
+Pass 3: [3, 2, 4, 5, 8]
+Pass 4: [2, 3, 4, 5, 8] (Sorted)</pre>
+    </div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif" alt="Bubble Sort Animation" style="max-width:100%;border-radius:8px;">
+    <hr>
+    <h2>Selection Sort</h2>
+    <p><strong>Concept:</strong> Selection Sort divides the list into a sorted and unsorted part. It repeatedly selects the smallest element from the unsorted part and moves it to the end of the sorted part.</p>
+    <ul>
+        <li>Find the minimum element in the unsorted part.</li>
+        <li>Swap it with the first unsorted element.</li>
+        <li>Expand the sorted part by one.</li>
+        <li>Repeat until the entire array is sorted.</li>
+    </ul>
+    <div style="background:#f6cd26; padding:10px; border-radius:6px; margin-bottom:10px;">
+        <strong>Pseudocode:</strong>
+        <pre style="margin:0;">for i from 0 to n-1:
+    min_idx = i
+    for j from i+1 to n-1:
+        if arr[j] < arr[min_idx]:
+            min_idx = j
+    swap arr[i], arr[min_idx]</pre>
+    </div>
+    <div style="margin-bottom:20px;">
+        <strong>Step-by-step Example:</strong>
+        <pre style="background:#fff; padding:8px; border-radius:6px;">Initial: [5, 3, 8, 4, 2]
+Step 1: Find min in [5, 3, 8, 4, 2] → 2, swap with 5 → [2, 3, 8, 4, 5]
+Step 2: Find min in [3, 8, 4, 5] → 3, swap with 3 → [2, 3, 8, 4, 5]
+Step 3: Find min in [8, 4, 5] → 4, swap with 8 → [2, 3, 4, 8, 5]
+Step 4: Find min in [8, 5] → 5, swap with 8 → [2, 3, 4, 5, 8]
+Step 5: [2, 3, 4, 5, 8] (Sorted)</pre>
+    </div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif" alt="Selection Sort Animation" style="max-width:100%;border-radius:8px;">
+    <hr>
+    <h2>Insertion Sort</h2>
+    <p><strong>Concept:</strong> Insertion Sort builds the sorted array one item at a time. It takes each element and inserts it into its correct position in the sorted part.</p>
+    <ul>
+        <li>Start with the second element.</li>
+        <li>Compare it to elements before it and insert it in the correct position.</li>
+        <li>Repeat for all elements.</li>
+    </ul>
+    <div style="background:#f6cd26; padding:10px; border-radius:6px; margin-bottom:10px;">
+        <strong>Pseudocode:</strong>
+        <pre style="margin:0;">for i from 1 to n-1:
+    key = arr[i]
+    j = i-1
+    while j >= 0 and arr[j] > key:
+        arr[j+1] = arr[j]
+        j = j-1
+    arr[j+1] = key</pre>
+    </div>
+    <div style="margin-bottom:20px;">
+        <strong>Step-by-step Example:</strong>
+        <pre style="background:#fff; padding:8px; border-radius:6px;">Initial: [5, 3, 8, 4, 2]
+Step 1: Insert 3 before 5 → [3, 5, 8, 4, 2]
+Step 2: 8 stays → [3, 5, 8, 4, 2]
+Step 3: Insert 4 before 8 → [3, 5, 4, 8, 2] → [3, 4, 5, 8, 2]
+Step 4: Insert 2 before 8 → [3, 4, 5, 2, 8] → [3, 4, 2, 5, 8] → [3, 2, 4, 5, 8] → [2, 3, 4, 5, 8] (Sorted)</pre>
+    </div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif" alt="Insertion Sort Animation" style="max-width:100%;border-radius:8px;">
+    <hr>
+    <h2>Comparison Table</h2>
+    <table style="width:100%;background:#fff;border-radius:8px;box-shadow:0 1px 4px #e0c26d;margin-bottom:20px;">
+        <thead style="background:#f6cd26;">
+            <tr><th>Algorithm</th><th>Best Case</th><th>Average Case</th><th>Worst Case</th><th>Space</th><th>Stable?</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+            <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>No</td></tr>
+            <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+        </tbody>
+    </table>
+    <hr>
+    <h2>More Resources</h2>
+    <ul>
+        <li><a href="https://visualgo.net/en/sorting" target="_blank">VisualGo: Sorting Visualizations</a></li>
+        <li><a href="https://www.geeksforgeeks.org/sorting-algorithms/" target="_blank">GeeksforGeeks: Sorting Algorithms</a></li>
+        <li><a href="https://www.toptal.com/developers/sorting-algorithms" target="_blank">Toptal: Interactive Sorting Algorithms</a></li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}DAA Sorting Game{% endblock %}</title>
+    <style>
+        body { font-family: Arial; margin: 0; background: #202020; color: #f6cd26; }
+        .navbar { background: #563226; padding: 15px 20px; border-bottom: 2px solid #331c17; }
+        .navbar a { color: #f6cd26; text-decoration: none; margin-right: 20px; padding: 8px 16px; }
+        .navbar a:hover, .navbar a.active { background: #331c17; border-radius: 4px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .btn { padding: 8px 16px; background: #ac6b26; color: #f6cd26; border: none; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn:hover { background: #563226; }
+        .btn-primary { background: #bb7f57; }
+        .btn-primary:hover { background: #ac6b26; }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+    <a href="/" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a>
+    </nav>
+    
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

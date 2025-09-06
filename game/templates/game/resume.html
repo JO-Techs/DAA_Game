@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Resume Game - DAA Sorting Game{% endblock %}
+
+{% block extra_css %}
+body { background: linear-gradient(120deg, #bb7f57 0%, #f6cd26 100%) !important; }
+.resume-header {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #563226;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 0 #fffbe6;
+}
+.game-card {
+    background: linear-gradient(135deg, #563226 60%, #bb7f57 100%);
+    padding: 24px;
+    margin: 18px 0;
+    border-radius: 18px;
+    border: 3px solid #f6cd26;
+    box-shadow: 0 4px 16px #bb7f57;
+    transition: transform 0.1s;
+}
+.game-card:hover { transform: scale(1.02); }
+.game-info { display: flex; justify-content: space-between; align-items: center; }
+.game-details { flex: 1; }
+.game-actions { display: flex; gap: 10px; }
+.status-completed { color: #bb7f57; }
+.status-progress { color: #f6cd26; }
+.btn-danger { background: #331c17; }
+.btn-danger:hover { background: #393939; }
+{% endblock %}
+
+{% block content %}
+<div class="resume-header">Resume Your Adventure!</div>
+
+{% if saved_games %}
+    <p style="text-align:center; font-size:1.2rem; color:#563226;">Pick a saved quest to continue:</p>
+    
+    {% for game in saved_games %}
+    <div class="game-card">
+        <div class="game-info">
+            <div class="game-details">
+                <h3 style="color:#f6cd26;">{{ game.player_name }}</h3>
+                <p><strong>Algorithm:</strong> {{ game.algorithm|title }} Sort</p>
+                <p><strong>Difficulty:</strong> {{ game.difficulty|title }}</p>
+                <p><strong>Score:</strong> {{ game.score }} | <strong>Moves:</strong> {{ game.moves }}</p>
+                <p><strong>Status:</strong> 
+                    {% if game.is_completed %}
+                        <span class="status-completed">Completed</span>
+                    {% else %}
+                        <span class="status-progress">In Progress</span>
+                    {% endif %}
+                </p>
+                <p><strong>Last Played:</strong> {{ game.updated_at|date:"M d, Y H:i" }}</p>
+            </div>
+            <div class="game-actions">
+                {% if not game.is_completed %}
+                    <a href="/game/?load={{ game.id }}" class="btn btn-primary">Resume</a>
+                {% endif %}
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_game" value="{{ game.id }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div style="text-align: center; padding: 40px;">
+        <h3 style="color:#563226; font-size:2rem;">No saved games found</h3>
+        <p style="color:#bb7f57; font-size:1.2rem;">Start a new game to create your first save!</p>
+        <a href="/game/" class="btn btn-primary" style="font-size:1.1rem;">Start New Game</a>
+    </div>
+{% endif %}
+{% endblock %}

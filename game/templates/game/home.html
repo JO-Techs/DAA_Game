@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - DAA Sorting Game{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 40px 0; background: linear-gradient(135deg, #f6cd26 0%, #bb7f57 100%); min-height: 100vh;">
+    <h1 style="font-size: 3rem; color: #563226; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 2px 2px 0 #fffbe6;">Sort Quest!</h1>
+    <p style="font-size: 1.3rem; color: #331c17; margin-bottom: 30px;">Ready to play, learn, and master sorting algorithms?</p>
+    <div style="display: flex; justify-content: center; gap: 40px; margin: 40px 0;">
+        <div style="background: linear-gradient(135deg, #563226 60%, #bb7f57 100%); box-shadow: 0 4px 16px #bb7f57; padding: 36px 30px 30px 30px; border-radius: 18px; width: 320px; border: 3px solid #f6cd26; position: relative;">
+
+            <h3 style="color: #f6cd26; font-size: 1.5rem; margin-bottom: 8px;">Start Adventure</h3>
+            <p style="color: #fffbe6; font-size: 1.1rem; margin-bottom: 18px;">Pick your challenge and begin sorting!</p>
+            <a href="/game/" class="btn btn-primary" style="background: #f6cd26; color: #563226; font-weight: bold; border-radius: 8px; padding: 12px 28px; font-size: 1.1rem; box-shadow: 0 2px 8px #bb7f57; transition: transform 0.1s;">Play Now</a>
+        </div>
+        <div style="background: linear-gradient(135deg, #563226 60%, #bb7f57 100%); box-shadow: 0 4px 16px #bb7f57; padding: 36px 30px 30px 30px; border-radius: 18px; width: 320px; border: 3px solid #f6cd26; position: relative;">
+
+            <h3 style="color: #f6cd26; font-size: 1.5rem; margin-bottom: 8px;">Resume Adventure</h3>
+            <p style="color: #fffbe6; font-size: 1.1rem; margin-bottom: 18px;">Continue your quest from last time!</p>
+            <a href="/resume/" class="btn" style="background: #f6cd26; color: #563226; font-weight: bold; border-radius: 8px; padding: 12px 28px; font-size: 1.1rem; box-shadow: 0 2px 8px #bb7f57; transition: transform 0.1s;">Resume</a>
+        </div>
+    </div>
+    <div style="background: #fffbe6; border: 3px solid #e0c26d; border-radius: 14px; margin: 0 auto 30px auto; max-width: 420px; padding: 28px; box-shadow: 0 2px 8px #e0c26d;">
+
+        <h3 style="color: #563226; font-size: 1.3rem;">How do these magical sorts work?</h3>
+        <p style="font-size: 1.1rem; color: #bb7f57; margin-bottom: 16px;">Check out our fun guide with animations and step-by-step examples!</p>
+        <a href="/learn/" class="btn" style="background: #f6cd26; color: #563226; font-weight: bold; border-radius: 8px; padding: 12px 28px; font-size: 1.1rem; text-decoration: none; box-shadow: 0 2px 8px #bb7f57;">Learn Sorting</a>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #bb7f57 0%, #f6cd26 100%); padding: 24px; border-radius: 16px; margin: 40px auto; max-width: 700px; box-shadow: 0 2px 8px #e0c26d;">
+        <h3 style="color: #563226; font-size: 1.6rem; margin-bottom: 18px;">Game Info</h3>
+        <div style="display: flex; justify-content: space-around; text-align: left; gap: 30px;">
+            <div>
+                <h4 style="color: #fffbe6;">Algorithms</h4>
+                <ul style="font-size: 1.1rem; color: #563226;">
+                    <li>Bubble Sort</li>
+                    <li>Selection Sort</li>
+                    <li>Insertion Sort</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #fffbe6;">Difficulty</h4>
+                <ul style="font-size: 1.1rem; color: #563226;">
+                    <li>Easy: 5-15 elements</li>
+                    <li>Medium: 16-30 elements</li>
+                    <li>Hard: 31-50 elements</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #fffbe6;">Scoring</h4>
+                <ul style="font-size: 1.1rem; color: #563226;">
+                    <li>Correct move: +1 point</li>
+                    <li>Wrong move: -1 point</li>
+                    <li>Complete sorting to win</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

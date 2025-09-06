@@ -1,0 +1,515 @@
+{% extends 'base.html' %}
+
+{% block title %}Game - DAA Sorting Game{% endblock %}
+
+{% block extra_css %}
+body { background: linear-gradient(120deg, #f6cd26 0%, #bb7f57 100%) !important; }
+.game-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #563226;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 0 #fffbe6;
+}
+.game-container { display: flex; justify-content: center; align-items: flex-start; min-height: calc(100vh - 120px); gap: 20px; }
+.game-area { flex: 0 0 auto; padding: 20px; text-align: center; max-width: 800px; background: #fffbe6; border-radius: 18px; box-shadow: 0 4px 16px #bb7f57; border: 3px solid #f6cd26; }
+.sidebar { width: 320px; background: #563226; padding: 20px; overflow-y: auto; border: 2px solid #331c17; border-radius: 8px; }
+.array-container { margin: 30px 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; }
+.array-element { 
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    width: 45px; 
+    height: 45px; 
+    background: #f6cd26; 
+    color: #202020; 
+    margin: 2px; 
+    cursor: pointer; 
+    border: 2px solid transparent;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+/* Selected tile: orange background, black border */
+.array-element.selected {
+    background: #ff8c00;
+    color: #fff;
+    border-color: #000;
+}
+.array-element.correct { 
+    background: #4CAF50 !important; 
+    color: #fff !important;
+}
+.array-element.wrong { 
+    background: #f44336 !important; 
+    color: #fff !important;
+}
+.array-element:hover { background: #ac6b26; color: #f6cd26; }
+.array-element.sorted { background: #bb7f57; color: #f6cd26; }
+.game-area { position: relative; }
+.drag-feedback { 
+    position: absolute; 
+    top: 10px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    background: #393939; 
+    color: #f6cd26; 
+    padding: 8px 16px; 
+    border-radius: 4px; 
+    border: 1px solid #bb7f57; 
+    display: none; 
+    z-index: 1001;
+}
+.controls { margin: 20px 0; text-align: center; }
+.controls select, .controls button { 
+    padding: 10px 16px; 
+    margin: 5px; 
+    background: #ac6b26; 
+    color: #f6cd26; 
+    border: 1px solid #331c17; 
+    cursor: pointer; 
+    border-radius: 4px;
+    font-weight: bold;
+}
+.controls button:hover { background: #563226; }
+.swap-controls { margin: 20px 0; text-align: center; }
+.swap-controls button { padding: 10px 20px; margin: 5px; background: #ac6b26; color: #f6cd26; border: 1px solid #331c17; cursor: pointer; border-radius: 4px; font-weight: bold; }
+.swap-controls button:hover { background: #563226; }
+.swap-controls button:disabled { background: #393939; opacity: 0.5; cursor: not-allowed; }
+#selectedInfo { margin-left: 15px; color: #bb7f57; font-weight: bold; }
+.hint-section { margin: 20px 0; text-align: center; }
+.hint-btn { background: #bb7f57; }
+.hint-btn:disabled { background: #563226; opacity: 0.5; cursor: not-allowed; }
+.hint-display { background: #393939; padding: 15px; margin: 10px 0; border-radius: 5px; border: 1px solid #bb7f57; color: #f6cd26; }
+.score { font-size: 24px; margin: 20px 0; color: #f6cd26; text-align: center; background: #393939; padding: 15px; border-radius: 8px; border: 1px solid #331c17; }
+.instructions h3 { color: #f6cd26; margin-top: 20px; }
+.algorithm-info { background: #393939; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #331c17; }
+.move-log { background: #393939; padding: 10px; margin: 10px 0; border-radius: 5px; max-height: 200px; overflow-y: auto; border: 1px solid #331c17; }
+.player-input { margin: 10px 0; }
+.player-input input { padding: 8px; background: #393939; color: #f6cd26; border: 1px solid #331c17; }
+.player-input label { color: #bb7f57; font-weight: bold; }
+{% endblock %}
+
+{% block content %}
+    <div class="game-container">
+        <div class="game-area">
+            <div class="player-input">
+                <label>Player Name: </label>
+                <input type="text" id="playerName" placeholder="Enter your name" value="Player1">
+            </div>
+            
+            <div class="controls">
+                <select id="algorithm">
+                    <option value="bubble">Bubble Sort</option>
+                    <option value="selection">Selection Sort</option>
+                    <option value="insertion">Insertion Sort</option>
+                </select>
+                <select id="difficulty">
+                    <option value="easy">Easy (5-15)</option>
+                    <option value="medium">Medium (16-30)</option>
+                    <option value="hard">Hard (31-50)</option>
+                </select>
+                <button onclick="newGame()">New Game</button>
+                <button onclick="resetArray()">Reset Array</button>
+            </div>
+            
+            <div class="swap-controls">
+                <button id="swapBtn" onclick="performSwap()" disabled>Swap</button>
+                <button id="deselectBtn" onclick="deselectAll()" disabled>Deselect</button>
+                <span id="selectedInfo">Select 2 tiles to swap</span>
+            </div>
+            
+            <div class="score">
+                Score: <span id="score">0</span> | 
+                Moves: <span id="moves">0</span> | 
+                Step: <span id="step">0</span>
+            </div>
+            
+            <div class="hint-section">
+                <button id="hintBtn" class="btn hint-btn" onclick="getHint()">Get Hint</button>
+                <span id="hintsLeft" style="margin-left: 10px; color: #bb7f57;">Hints: 0</span>
+                <div id="hintDisplay" class="hint-display" style="display: none;"></div>
+            </div>
+            
+            <div id="status">Select algorithm and difficulty, then click New Game</div>
+            <div id="winOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(246,205,38,0.95); z-index:9999; text-align:center;">
+                <div style="position:relative; top:20vh; margin:auto; max-width:500px; background:#fffbe6; border-radius:24px; box-shadow:0 4px 32px #bb7f57; border:5px solid #f6cd26; padding:40px;">
+                    <h1 style="font-size:3rem; color:#563226; margin-bottom:20px;">🏆 You Win!</h1>
+                    <p style="font-size:1.5rem; color:#bb7f57; margin-bottom:20px;">Congratulations! You sorted the array in <span id="winMoves"></span> moves!</p>
+                    <button onclick="location.reload()" style="background:#f6cd26; color:#563226; font-weight:bold; border-radius:8px; padding:16px 32px; font-size:1.2rem; border:none; box-shadow:0 2px 8px #bb7f57; cursor:pointer;">Play Again</button>
+                </div>
+            </div>
+            
+            <div class="drag-feedback" id="dragFeedback">Drag tiles to sort the array</div>
+            
+            <div class="array-container">
+                <div id="array"></div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="instructions">
+                <h2>How to Play</h2>
+                
+                <h3>Objective</h3>
+                <ul>
+                    <li>Sort the array following specific algorithm rules</li>
+                    <li>Correct moves: +1 point</li>
+                    <li>Wrong moves: -1 point</li>
+                    <li>Complete sorting to win</li>
+                </ul>
+                
+                <h3>Controls</h3>
+                <ul>
+                    <li>Click tiles to select them (orange highlight)</li>
+                    <li>Select 2 tiles then click Swap button</li>
+                    <li>Green flash = correct move, Red flash = wrong move</li>
+                    <li>Use Deselect button to clear selections</li>
+                </ul>
+                
+                <h3>Algorithms</h3>
+                
+                <div class="algorithm-info">
+                    <strong>Bubble Sort</strong><br>
+                    • Only swap adjacent elements<br>
+                    • Larger element must move right<br>
+                    • Compare neighbors repeatedly
+                </div>
+                
+                <div class="algorithm-info">
+                    <strong>Selection Sort</strong><br>
+                    • Find minimum in unsorted portion<br>
+                    • Swap with first unsorted position<br>
+                    • Build sorted portion from left
+                </div>
+                
+                <div class="algorithm-info">
+                    <strong>Insertion Sort</strong><br>
+                    • Take next unsorted element<br>
+                    • Insert in correct sorted position<br>
+                    • Shift elements as needed
+                </div>
+                
+                <h3>Difficulty Levels</h3>
+                <ul>
+                    <li><strong>Easy:</strong> 5-15 elements, mostly sorted</li>
+                    <li><strong>Medium:</strong> 16-30 elements, moderately shuffled</li>
+                    <li><strong>Hard:</strong> 31-50 elements, completely random</li>
+                </ul>
+                
+                <h3>Move Log</h3>
+                <div id="moveLog" class="move-log">
+                    <p style="color: #f6cd26;">Moves will appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+        let gameArray = [];
+        let originalArray = [];
+
+        let score = 0;
+        let moves = 0;
+        let step = 0;
+        let currentAlgorithm = '';
+        let currentGameId = null;
+        let hintsUsed = 0;
+        let maxHints = 0;
+        let currentDifficulty = '';
+        let selectedIndices = [];
+        
+        function updateDisplay() {
+            const arrayDiv = document.getElementById('array');
+            arrayDiv.innerHTML = '';
+            
+            gameArray.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                element.onclick = () => selectElement(index);
+                
+                if (selectedIndices.includes(index)) {
+                    element.classList.add('selected');
+                }
+                
+                // Mark sorted portion based on algorithm
+                if (currentAlgorithm === 'selection' && index < step) {
+                    element.classList.add('sorted');
+                } else if (currentAlgorithm === 'insertion' && index <= step) {
+                    element.classList.add('sorted');
+                }
+                
+                arrayDiv.appendChild(element);
+            });
+            
+            document.getElementById('score').textContent = score;
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('step').textContent = step;
+            
+            // Update hints display
+            const hintsLeft = maxHints - hintsUsed;
+            document.getElementById('hintsLeft').textContent = `Hints: ${hintsLeft}/${maxHints}`;
+            document.getElementById('hintBtn').disabled = hintsLeft <= 0;
+            
+            updateSwapControls();
+        }
+        
+        function selectElement(index) {
+            if (selectedIndices.includes(index)) {
+                selectedIndices = selectedIndices.filter(i => i !== index);
+            } else if (selectedIndices.length < 2) {
+                selectedIndices.push(index);
+            }
+            updateDisplay();
+        }
+        
+        function updateSwapControls() {
+            const swapBtn = document.getElementById('swapBtn');
+            const deselectBtn = document.getElementById('deselectBtn');
+            const selectedInfo = document.getElementById('selectedInfo');
+            
+            if (selectedIndices.length === 0) {
+                swapBtn.disabled = true;
+                deselectBtn.disabled = true;
+                selectedInfo.textContent = 'Select 2 tiles to swap';
+            } else if (selectedIndices.length === 1) {
+                swapBtn.disabled = true;
+                deselectBtn.disabled = false;
+                selectedInfo.textContent = `Selected: ${gameArray[selectedIndices[0]]} - Select 1 more`;
+            } else {
+                swapBtn.disabled = false;
+                deselectBtn.disabled = false;
+                selectedInfo.textContent = `Selected: ${gameArray[selectedIndices[0]]}, ${gameArray[selectedIndices[1]]}`;
+            }
+        }
+        
+        function performSwap() {
+            if (selectedIndices.length === 2) {
+                makeMove(selectedIndices[0], selectedIndices[1]);
+                selectedIndices = [];
+            }
+        }
+        
+        function deselectAll() {
+            selectedIndices = [];
+            updateDisplay();
+        }
+        
+        function validateMove(from, to) {
+            if (currentAlgorithm === 'bubble') {
+                return Math.abs(from - to) === 1 && gameArray[from] > gameArray[to];
+            }
+            
+            if (currentAlgorithm === 'selection') {
+                if (from !== step) return false;
+                let minIdx = step;
+                for (let i = step + 1; i < gameArray.length; i++) {
+                    if (gameArray[i] < gameArray[minIdx]) minIdx = i;
+                }
+                return to === minIdx && from !== to;
+            }
+            
+            if (currentAlgorithm === 'insertion') {
+                if (from !== step + 1) return false;
+                const element = gameArray[from];
+                let correctPos = 0;
+                for (let i = 0; i <= step; i++) {
+                    if (gameArray[i] <= element) correctPos = i + 1;
+                }
+                return to === correctPos;
+            }
+            
+            return false;
+        }
+        
+        function swapElements(from, to) {
+            if (currentAlgorithm === 'insertion') {
+                const value = gameArray[from];
+                gameArray.splice(from, 1);
+                gameArray.splice(to, 0, value);
+            } else {
+                [gameArray[from], gameArray[to]] = [gameArray[to], gameArray[from]];
+            }
+        }
+        
+        function showFeedback(from, to, isValid) {
+            const elements = document.querySelectorAll('.array-element');
+            elements[from].classList.add(isValid ? 'correct' : 'wrong');
+            elements[to].classList.add(isValid ? 'correct' : 'wrong');
+            setTimeout(() => {
+                elements[from].classList.remove('correct', 'wrong');
+                elements[to].classList.remove('correct', 'wrong');
+            }, 800);
+        }
+        
+        function makeMove(from, to) {
+            const isValid = validateMove(from, to);
+            swapElements(from, to);
+            if (isValid) {
+                score++;
+                if (currentAlgorithm !== 'bubble') step++;
+            } else {
+                score--;
+            }
+            moves++;
+            showFeedback(from, to, isValid);
+            logMove(from, to, isValid);
+            setTimeout(() => {
+                updateDisplay();
+                if (isSorted()) {
+                    document.getElementById('winMoves').textContent = moves;
+                    document.getElementById('winOverlay').style.display = 'block';
+                    document.querySelector('.game-area').style.opacity = '0.5';
+                    document.querySelector('.sidebar').style.opacity = '0.5';
+                }
+            }, 800);
+        }
+        
+        function logMove(from, to, valid) {
+            const log = document.getElementById('moveLog');
+            const entry = document.createElement('div');
+            entry.innerHTML = `Move ${moves}: (${from},${to}) ${valid ? '✓' : '✗'} ${valid ? '+1' : '-1'}`;
+            entry.style.color = valid ? '#bb7f57' : '#725956';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function isSorted() {
+            for (let i = 1; i < gameArray.length; i++) {
+                if (gameArray[i] < gameArray[i-1]) return false;
+            }
+            return true;
+        }
+        
+        async function newGame() {
+            const algorithm = document.getElementById('algorithm').value;
+            const difficulty = document.getElementById('difficulty').value;
+            const playerName = document.getElementById('playerName').value || 'Player1';
+            
+            try {
+                const response = await fetch('/api/new-game/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        algorithm: algorithm,
+                        difficulty: difficulty,
+                        playerName: playerName
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to create game');
+                const data = await response.json();
+                gameArray = [...data.array];
+                originalArray = [...data.array];
+                currentAlgorithm = algorithm;
+                currentDifficulty = difficulty;
+                currentGameId = data.gameId;
+                selectedIndices = [];
+                score = 0;
+                moves = 0;
+                step = 0;
+                hintsUsed = 0;
+                
+                
+                maxHints = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 2 : 1;
+                
+                document.getElementById('moveLog').innerHTML = '<p style="color: #f6cd26;">Moves will appear here</p>';
+                document.getElementById('status').textContent = `New ${algorithm} sort game started! Array length: ${data.length}`;
+                document.getElementById('hintDisplay').style.display = 'none';
+                
+                updateDisplay();
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error creating game. Please try again.';
+            }
+        }
+        
+        async function loadGame(gameId) {
+            const response = await fetch('/api/load-game/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ gameId: gameId })
+            });
+            
+            const data = await response.json();
+            if (data.error) {
+                alert('Error loading game: ' + data.error);
+                return;
+            }
+            
+            gameArray = [...data.array];
+            originalArray = [...data.originalArray];
+            currentAlgorithm = data.algorithm;
+            currentDifficulty = data.difficulty;
+            currentGameId = data.gameId;
+            score = data.score;
+            moves = data.moves;
+            step = data.step;
+            hintsUsed = data.hintsUsed || 0;
+            selectedIndices = [];
+            
+          
+            maxHints = data.difficulty === 'easy' ? 3 : data.difficulty === 'medium' ? 2 : 1;
+            
+            document.getElementById('algorithm').value = data.algorithm;
+            document.getElementById('difficulty').value = data.difficulty;
+            document.getElementById('playerName').value = data.playerName;
+            document.getElementById('moveLog').innerHTML = '<p style="color: #bb7f57;">Game loaded successfully</p>';
+            document.getElementById('status').textContent = `Resumed ${data.algorithm} sort game`;
+            document.getElementById('hintDisplay').style.display = 'none';
+            
+            updateDisplay();
+        }
+        
+        function resetArray() {
+            gameArray = [...originalArray];
+            selectedIndices = [];
+            step = 0;
+            document.getElementById('status').textContent = 'Array reset to original state';
+            document.getElementById('hintDisplay').style.display = 'none';
+            updateDisplay();
+        }
+        
+        async function getHint() {
+            if (hintsUsed >= maxHints) {
+                document.getElementById('status').textContent = 'No more hints available!';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/get-hint/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        algorithm: currentAlgorithm,
+                        array: gameArray,
+                        step: step
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to get hint');
+                const data = await response.json();
+                
+                hintsUsed++;
+                document.getElementById('hintDisplay').innerHTML = `<strong>Hint:</strong> ${data.hint}`;
+                document.getElementById('hintDisplay').style.display = 'block';
+                document.getElementById('status').textContent = `Hint used! (${hintsUsed}/${maxHints})`;
+                
+                updateDisplay();
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error getting hint. Please try again.';
+            }
+        }
+        
+      
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const loadGameId = urlParams.get('load');
+            if (loadGameId) {
+                loadGame(loadGameId);
+            }
+        }
+</script>
+{% endblock %}
